@@ -122,7 +122,13 @@ int search_book(char* title)
 
 int print_all_books() {
     int i = hd_tl.head;
-    while (books_table[i].next != -1) {
+    while (1) {
+        if (books_table[i].next == -1) {
+            printf("Title: %s\nAuthor: %s\nIBN: %d\n\n", 
+            books_table[i].title, books_table[i].author, books_table[i].IBN);
+            return BOOK_OK;
+        }
+
         printf("Title: %s\nAuthor: %s\nIBN: %d\n\n", 
         books_table[i].title, books_table[i].author, books_table[i].IBN);
         i = books_table[i].next;

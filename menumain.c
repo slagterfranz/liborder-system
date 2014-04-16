@@ -38,7 +38,8 @@ int inp = get_int_output();
         case 2:
             printf("Search book: ");
             char* sec = input();
-            print_free(sec);
+            if (print_free(sec) == BOOK_ERROR)
+                printf("Book not found\n");
                 break;
 
         case 3:
