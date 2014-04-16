@@ -1,7 +1,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "func.h"
-
+#include <stdlib.h>
 book books_table[MAX_BOOKS];
 
 
@@ -80,22 +80,49 @@ int delete_book(int ibn) {
     return BOOK_ERROR;
 }
 
-int search_book(char* title) {
-    int i;
-    i = hd_tl.head;
-    while (strncmp(books_table[i].title, title, 100) != 0) {
-        if (books_table[i].next == -1) {
-            return BOOK_ERROR;
-            }
-        i = books_table[i].next;
-    }
-    return i;
-}
+//checks how many books contains the same name, and return
+//i number of same names.
 
+int search_book(char* title) 
+{
+    int i; 
+    hd_tl_s.is_empty_first = 1;
+    hd_tl_s.is_empty_array = 1;
+    for (i = hd_tl.head; books_table[i].next != -1;  i = books_table[i].next) {
+        if (strncmp(books_table[i].title, title, 100) == 0) {
+            hd_tl_s.is_empty_array = 0; 
+            if (hd_tl_s.is_empty_first == 1) {
+                hd_tl_s.is_empty_first = 0;
+                search_book_mal *k = (search_book_mal*) malloc(sizeof(search_book_mal));
+                hd_tl_s.first = k;
+                hd_tl_s.last = k;
+                k->book = &books_table[i];
+                k->next = k;
+                k->is_last = 1;
+            }
+            
+            else {
+                search_book_mal *k = (search_book_mal*) malloc(sizeof(search_book_mal));
+                k->book = &books_table[i];
+                k->next = k;
+                k->is_last = 1;
+                hd_tl_s.last->is_last = 0; 
+                hd_tl_s.last->next = k;
+                hd_tl_s.last = k;
+           }
+        }
+    }        
+    
+    if (hd_tl_s.is_empty_array == 1) {
+        return BOOK_ERROR;
+    }
+
+    return BOOK_OK;
+}
 
 int print_all_books() {
     int i = hd_tl.head;
-    while (books_table[i].is_used != 0) {
+    while (books_table[i].next != -1) {
         printf("Title: %s\nAuthor: %s\nIBN: %d\n\n", 
         books_table[i].title, books_table[i].author, books_table[i].IBN);
         i = books_table[i].next;
@@ -107,4 +134,35 @@ book get_book(int i)
 {
     return books_table[i];
 }
+
+int print_free(char* title) 
+{
+    if (search_book(title) == BOOK_OK) {
+    search_book_mal *k = hd_tl_s.first;
+
+        while (1) {
+            if (k->is_last == 1) {
+                printf("Title: %s\n", k->book->title);
+                printf("Author: %s\n", k->book->author);
+                printf("IBN: %d\n\n", k->book->IBN);
+                free(k);
+                return BOOK_OK;
+                }
+
+            printf("Title: %s\n", k->book->title);
+            printf("Author: %s\n", k->book->author);
+            printf("IBN: %d\n\n", k->book->IBN);
+            
+            k = k->next;
+            free(hd_tl_s.first);
+
+            hd_tl_s.first = k;
+        }
+   return BOOK_OK;
+   } 
+   return BOOK_ERROR;
+}
+
+    
+    
 

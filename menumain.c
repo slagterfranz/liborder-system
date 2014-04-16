@@ -37,17 +37,8 @@ int inp = get_int_output();
 
         case 2:
             printf("Search book: ");
-            int i;
-            book book;
-            char* search_title = input();
-            if ((i = search_book(search_title)) != BOOK_ERROR) { 
-                book = get_book(i);
-                printf("author: %s\n", book.author);
-                printf("title: %s\n", book.title);
-                printf("ibn: %d\n", book.IBN);
-                break;
-                }
-            printf("book not found");
+            char* sec = input();
+            print_free(sec);
                 break;
 
         case 3:
@@ -64,6 +55,7 @@ int inp = get_int_output();
         case 4:
             system("clear");
             print_all_books();
+            return BOOK_OK;
                 break;
 
         default:
