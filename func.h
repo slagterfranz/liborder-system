@@ -7,7 +7,7 @@
 #define BOOK_OK 0
 
 typedef struct {
-    int IBN;
+    long long IBN;
     char author[100];
     char title[100];
     int is_used;
@@ -37,10 +37,19 @@ static struct {
 
 
 int init_books_table();
-int insert_book(char* author, char* title, int ibn);
-int delete_book(int ibn);
+int insert_book(char* author, char* title, long long ibn);
+int delete_book(long long ibn);
 int search_book(char* title); 
 int print_all_books();
 int print_free(char* title);
+int change_head(int cheader);
+int change_tail(int ctail);
 book get_book();
+int get_head();
+int get_tail();
+int change_next(int b, int next);
+int change_author(int b, char* author);
+int change_title(int b, char* title);
+int change_ibn(int b, long long ibn);
+int change_is_used(int b, int is);
 #endif

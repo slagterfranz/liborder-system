@@ -40,7 +40,6 @@ char* input()
         if (i > 1) {
             element.more_than_one_element = MORE_CHARS;
         }
-
         if (i == 1) {
             element.more_than_one_element = ONE_CHAR;
         }
@@ -51,13 +50,30 @@ char* input()
     return name;
 }
 
+//Takes only ints as input. If anything else given, 
+//BOOK_ERROR will be returned
 int intinput() 
-{
-    int n;
-    scanf ("%d",&n);
-    return n;
+{   
+    long out = 0;
+    int val;
+    while(1) {
+    val = getchar();
+        if  (val == EOF || val == '\n') {
+            if (out == 0)
+                return BOOK_ERROR;
+            else {
+                return out;
+            }
+        }
+        if (val >= '0' && val <= '9') {
+            val = val - '0';
+            out = 10 * out + val;
+        }
+        else {
+            return BOOK_ERROR;
+        }
+    }
 }
-
     
 int get_int_output() 
 {

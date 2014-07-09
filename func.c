@@ -2,19 +2,28 @@
 #include <stdio.h>
 #include "func.h"
 #include <stdlib.h>
+#include "io.h"
 book books_table[MAX_BOOKS];
 
 
 int init_books_table() {
-    int i;
-    for (i = 0; i < MAX_BOOKS; i++) {
-        books_table[i].is_used = 0;
-        }
-    return BOOK_OK;
+   int i;
+   for (i = 0; i < MAX_BOOKS; i++) {
+       books_table[i].is_used = 0;
+       }
+       load_saved_books();
+       return BOOK_OK;
 }
 
-int insert_book(char* author, char* title, int ibn) {
+
+int insert_book(char* author, char* title, long long ibn) {
     int i = 0;
+    char holder1[100];
+    char holder2[100];
+    char holder3[100];
+    strncpy(holder1, author, 100);
+    strncpy(holder2, title, 100);
+    
     while (books_table[i].is_used == 1) {
         i++;
     }
@@ -23,20 +32,47 @@ int insert_book(char* author, char* title, int ibn) {
     strncpy(books_table[i].title, title ,100);
     books_table[i].IBN = ibn;
 
+//    add_nl(holder1);
+//    add_nl(holder2);
+//    add_nl(holder3);
+
+
+    FILE *fp = fopen("saves.liborder", "a");
+    fputs(holder1, fp);
+    fputs(holder2, fp);
+    sprintf(holder3, "%lld", ibn);
+    fputs(holder3, fp);
+
+    printf("author from ins_book: %s \n", author);
+    printf("title from ins_book: %s\n", title);
+    printf("ibn from ins_book: %i\n", ibn);
+
     if (hd_tl.head == -1) {
         hd_tl.head = i;
         hd_tl.tail = i;
         books_table[i].next = -1;
-        }
+    }
+        
+
     else {
         books_table[hd_tl.tail].next = i;
         hd_tl.tail = i;
         books_table[i].next = -1;
-        }
-     return BOOK_OK;
+    }
+
+    fclose(fp);
+    return BOOK_OK;
 }
 
-int delete_book(int ibn) {
+void put_string(FILE *fp, char* fields) {
+    int i =  0;
+    /*while (fields[i] != '\0' || fields[i] != '\n') */while(i < 20){
+        putc(fields[i], fp);
+        i++;
+    }
+}
+
+int delete_book(long long ibn) {
     
     //initializes the first 3 books, so that eventually 
     //if we are in the middle of the list (ie. not last 
@@ -48,7 +84,7 @@ int delete_book(int ibn) {
     third = books_table[second].next;
 
     //if the ibn number is equal to 1. (ie. there is only
-    //1 element in the list), then 1. is set to is_used 1.
+    //1 element in the list), then 1. is set to is_used 0.
     if (ibn == books_table[first].IBN) {
         books_table[first].is_used = 0;
         hd_tl.head = second;
@@ -122,16 +158,19 @@ int search_book(char* title)
 
 int print_all_books() {
     int i = hd_tl.head;
+    int d = 1;
     while (1) {
+        d++;
         if (books_table[i].next == -1) {
-            printf("Title: %s\nAuthor: %s\nIBN: %d\n\n", 
+            printf("Title: %s\nAuthor: %s\nIBN: %llu\n\n", 
             books_table[i].title, books_table[i].author, books_table[i].IBN);
-            return BOOK_OK;
+            break;
         }
 
-        printf("Title: %s\nAuthor: %s\nIBN: %d\n\n", 
+        printf("Title: %s\nAuthor: %s\nIBN: %llu\n\n", 
         books_table[i].title, books_table[i].author, books_table[i].IBN);
         i = books_table[i].next;
+
     }
     return BOOK_OK;
 }
@@ -150,14 +189,14 @@ int print_free(char* title)
             if (k->is_last == 1) {
                 printf("Title: %s\n", k->book->title);
                 printf("Author: %s\n", k->book->author);
-                printf("IBN: %d\n\n", k->book->IBN);
+                printf("IBN: %lld\n\n", k->book->IBN);
                 free(k);
                 return BOOK_OK;
                 }
 
             printf("Title: %s\n", k->book->title);
             printf("Author: %s\n", k->book->author);
-            printf("IBN: %d\n\n", k->book->IBN);
+            printf("IBN: %lld\n\n", k->book->IBN);
             
             k = k->next;
             free(hd_tl_s.first);
@@ -169,6 +208,46 @@ int print_free(char* title)
    return BOOK_ERROR;
 }
 
-    
-    
+int change_head(int cheader) {
+    hd_tl.head = cheader;
+    return BOOK_OK;
+}
 
+int change_tail(int ctail) {
+    hd_tl.tail = ctail;
+    return BOOK_OK;
+}
+
+
+int get_head() {
+    return hd_tl.head;
+}
+
+int get_tail() {
+    return hd_tl.tail;
+}
+
+int change_next(int i, int next2) {
+    books_table[i].next = next2;
+    return BOOK_OK;
+}
+
+int change_author(int i, char* author) {
+    strncpy(books_table[i].author, author, 100);
+    return BOOK_OK;
+}
+
+int change_title(int i, char* title) {
+    strncpy(books_table[i].title, title, 100);
+    return BOOK_OK;
+}
+
+int change_ibn(int i, long long ibn) {
+    books_table[i].IBN = ibn;
+    return BOOK_OK;
+}
+
+int change_is_used(int i, int is) {
+    books_table[i].is_used = is;
+    return BOOK_OK;
+}

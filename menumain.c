@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "input.h"
+#include "io.h"
 #include "func.h"
 #include "menumain.h"
 int menumain(){
@@ -12,6 +13,7 @@ int menumain(){
     printf("*   2.  search(title)                   *\n");
     printf("*   3.  delete book(ibn)                *\n");
     printf("*   4.  print all books                 *\n");
+    printf("*   5.  load some books                 *\n");
     printf("*****************************************\n");
 
 int inp = get_int_output();
@@ -28,10 +30,16 @@ int inp = get_int_output();
             printf("%s\n", author);
 
             printf("ibn of book: ");
-            int ibn = intinput();
-            printf("%d\n", ibn);
+            long long ibn = intinput();
+            if (ibn == -2) {
+                system("clear");
+                printf("Use only numbers\n");
+                break;
+            }
+            printf("%lld\n", ibn);
             insert_book(author, name, ibn);
-            system("clear");
+            //system("clear");
+            
             return BOOK_OK;
                 break;
 
@@ -44,8 +52,8 @@ int inp = get_int_output();
 
         case 3:
             printf("Delete book: ");
-            int del = intinput();
-            int delp = delete_book(del);
+            long long del = intinput();
+            long long delp = delete_book(del);
             if (delp == BOOK_OUT_OF_BOUND)
                 printf("Book not existing");
             
@@ -59,6 +67,9 @@ int inp = get_int_output();
             return BOOK_OK;
                 break;
 
+        case 5:
+            load_saved_books("saves.liborder");
+            
         default:
             system("clear");
             printf("Don't try to use commands that doesn't exist\n");       
